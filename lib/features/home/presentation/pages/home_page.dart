@@ -14,7 +14,6 @@ class HomePage extends StatelessWidget {
         child: AppBarWidget(title: "Seja Bem-Vindo"),
       ),
       body: Container(),
-      // Other widget configurations...
     );
   }
 }

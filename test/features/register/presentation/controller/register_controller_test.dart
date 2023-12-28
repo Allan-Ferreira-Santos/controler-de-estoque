@@ -1,20 +1,21 @@
+import 'dart:io';
+import 'package:hive/hive.dart';
+import '../../data/models/register_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import '../../domain/use_cases/register_user_usecase.dart';
+import '../../data/data_source/register_user_data_source.dart';
 import '../../domain/repositories/register_user_repository.dart';
+import '../../data/data_source/register_user_data_source_impl.dart';
 import '../../data/repositories/register_user_repository_impl.dart';
-
-
 
 class RegisterModule extends Module {
   @override
   void binds(Injector i) {
     i.add(RegisterUserUseCase.new);
-    i.add<RegisterUserRepository>(
-      RegisterUserRepositoryImpl.new,
-    );
+    i.add<RegisterUserRepository>(RegisterUserRepositoryImpl.new);
+    i.add<RegisterUserDataSource>(RegisterUserDataSourceImpl.new);
   }
-
 }
 
 class RegisterUserController {
@@ -39,22 +40,20 @@ class RegisterUserController {
   }
 }
 
-void main() {
-  Modular.bindModule(RegisterModule());
+void main() async {
+  var path = Directory.current.path;
+  Hive.init(path);
 
+  Modular.bindModule(RegisterModule());
   late RegisterUserController registerUserController;
 
   setUp(() {
-    print("3");
     registerUserController = RegisterUserController();
   });
-
   test('should register user successfully', () async {
-    const email = 'testexample.com';
+    const email = 'tesdfste@xample.com';
     const password = 'password123';
     const name = 'John Doe';
-
-    print("2");
 
     final result = await registerUserController.registerUser(
       email: email,
@@ -62,9 +61,7 @@ void main() {
       name: name,
     );
 
-    print("5");
-    expect(result,
-        'expected_result'); // Update this line based on the actual expected result.
+    expect(result, isA<RegisterUserModel>());
   });
 
   test('should handle registration error', () async {

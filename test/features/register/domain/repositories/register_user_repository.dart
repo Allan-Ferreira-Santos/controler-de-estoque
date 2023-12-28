@@ -2,6 +2,5 @@ import 'package:controle_de_estoque/features/register/domain/entities/register_u
 
 abstract class RegisterUserRepository{
 
-Future<RegisterUserEntity> register(RegisterUserEntity registerUserEntity); 
-
+Future<RegisterUserEntity> registerUser(RegisterUserEntity registerUserEntity); 
 }

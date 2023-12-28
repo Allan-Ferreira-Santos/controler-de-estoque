@@ -14,24 +14,25 @@ class RegisterUserUseCase {
     required String password,
     required String name,
   }) async {
-    print("teste");
     if (email.isNotEmpty && password.isNotEmpty && name.isNotEmpty) {
       if (!validationEmail(email: email)) {
         throw Exception('Invalid email format');
       }
       if (!validationPassword(password: password)) {
-        throw Exception('The password must have at least 8 characters and a number');
+        throw Exception(
+            'The password must have at least 8 characters and a number');
       }
       if (!validationName(name: name)) {
         throw Exception('The name must have at least 2 characters');
       }
+      
       final RegisterUserEntity registerUserEntity = RegisterUserEntity(
         email: email,
         name: name,
         password: password,
       );
 
-      return await registerUserRepository.register(registerUserEntity);
+      return await registerUserRepository.registerUser(registerUserEntity);
     }
     return throw Exception('fill in all the fields');
   }

@@ -1,9 +1,9 @@
-class RegisterEntity {
+class RegisterUserEntity {
   final String name;
   final String email;
   final String password;
 
-  RegisterEntity({
+  RegisterUserEntity({
     required this.name,
     required this.email,
     required this.password,

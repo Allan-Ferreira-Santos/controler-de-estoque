@@ -11,7 +11,7 @@ class RegisterUserRepositoryImpl implements RegisterUserRepository {
   @override
   Future<RegisterUserEntity> registerUser(
       RegisterUserEntity registerEntity) async {
-    return await dataSource.registerUser(RegisterUserModel.fromEntity(registerEntity));
+    return await dataSource
+        .registerUser(RegisterUserModel.fromEntity(registerEntity));
   }
-
 }

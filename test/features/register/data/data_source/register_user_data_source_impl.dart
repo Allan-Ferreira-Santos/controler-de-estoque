@@ -8,19 +8,38 @@ class RegisterUserDataSourceImpl implements RegisterUserDataSource {
       RegisterUserModel registerUserModel) async {
     try {
       final box = await Hive.openBox('userBox');
-      final registerUser = registerUserModel.toJson();
-      final key = await box.add(registerUser);
-      final Map<String, dynamic> json = await getUser(key, box);
 
-      return RegisterUserModel.fromJson(json);
+      if (!_validateEmailExists(box, registerUserModel.email)) {
+        final registerUserJson = registerUserModel.toJson();
+        final key = await box.add(registerUserJson);
+        final userJson = await getUser(key, box);
+
+        return RegisterUserModel.fromJson(userJson);
+      }
+
+      throw Exception('Email already exists');
     } catch (e) {
       rethrow;
     }
   }
 
+  @override
   Future<Map<String, dynamic>> getUser(int key, Box<dynamic> box) async {
-    final user = await box.get(key);
-    box.close();
-    return user;
+    try {
+      final user = await box.get(key);
+      return user;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  bool _validateEmailExists(Box<dynamic> box, String email) {
+    final boxValues = box.values;
+    for (var value in boxValues) {
+      if (value['email'] == email) {
+        return true;
+      }
+    }
+    return false;
   }
 }

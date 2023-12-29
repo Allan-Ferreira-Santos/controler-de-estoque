@@ -18,7 +18,7 @@ dependencies:
   flutter_modular: ^6.3.2
   hive: ^2.2.3
   build_runner: ^2.4.6
-  uuid: ^3.0.0
+  faker: ^2.1.0
   
 dev_dependencies:
   flutter_test:

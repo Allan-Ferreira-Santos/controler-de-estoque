@@ -3,8 +3,8 @@ import 'package:hive/hive.dart';
 import '../../data/models/register_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import '../../domain/use_cases/register_user_usecase.dart';
 import '../../data/data_source/register_user_data_source.dart';
+import '../../domain/use_cases/register_user_usecase_test.dart';
 import '../../domain/repositories/register_user_repository.dart';
 import '../../data/data_source/register_user_data_source_impl.dart';
 import '../../data/repositories/register_user_repository_impl.dart';
@@ -50,8 +50,9 @@ void main() async {
   setUp(() {
     registerUserController = RegisterUserController();
   });
+
   test('should register user successfully', () async {
-    const email = 'tesdfste@xample.com';
+    const email = 'testALlan123@example.com';
     const password = 'password123';
     const name = 'John Doe';
 
@@ -60,13 +61,15 @@ void main() async {
       password: password,
       name: name,
     );
+
+    print(result);
 
     expect(result, isA<RegisterUserModel>());
   });
 
   test('should handle registration error', () async {
-    const email = 'invalid-email';
-    const password = 'password123';
+    const email = 'testeemail.com';
+    const password = 'passasd123adadw';
     const name = 'John Doe';
 
     final result = await registerUserController.registerUser(
@@ -75,6 +78,8 @@ void main() async {
       name: name,
     );
 
-    expect(result, isA<String>());
+    print(result);
+
+    expect(result, isA<Exception>());
   });
 }

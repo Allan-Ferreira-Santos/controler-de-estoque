@@ -1,0 +1,3 @@
+class ValidateEmailExistException implements Exception{
+
+}

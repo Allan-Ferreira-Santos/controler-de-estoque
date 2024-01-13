@@ -1,22 +1,9 @@
-import 'dart:io';
-import 'package:hive/hive.dart';
-import '../../data/models/register_model.dart';
+import 'package:faker/faker.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_modular/flutter_modular.dart';
-import '../../data/data_source/register_user_data_source.dart';
 import '../../domain/use_cases/register_user_usecase_test.dart';
-import '../../domain/repositories/register_user_repository.dart';
-import '../../data/data_source/register_user_data_source_impl.dart';
-import '../../data/repositories/register_user_repository_impl.dart';
-
-class RegisterModule extends Module {
-  @override
-  void binds(Injector i) {
-    i.add(RegisterUserUseCase.new);
-    i.add<RegisterUserRepository>(RegisterUserRepositoryImpl.new);
-    i.add<RegisterUserDataSource>(RegisterUserDataSourceImpl.new);
-  }
-}
+import 'package:controle_de_estoque/features/register/domain/entities/register_user_params_entity.dart';
 
 class RegisterUserController {
   final registerUserUseCase = Modular.get<RegisterUserUseCase>();
@@ -27,59 +14,54 @@ class RegisterUserController {
     required String name,
   }) async {
     try {
-      final result = await registerUserUseCase.call(
+      final RegisterUserParamsEntity entityParams = RegisterUserParamsEntity(
+        name: name,
         email: email,
         password: password,
-        name: name,
       );
+
+      final result = await registerUserUseCase.call(params: entityParams);
 
       return result;
     } catch (e) {
-      return 'Error when registering $e';
+      return e;
     }
   }
 }
 
-void main() async {
-  var path = Directory.current.path;
-  Hive.init(path);
+class MockRegisterUserUseCase extends Mock implements RegisterUserUseCase {}
 
-  Modular.bindModule(RegisterModule());
-  late RegisterUserController registerUserController;
+void main() async {
+  RegisterUserParamsEntity fakerDataRegister() => RegisterUserParamsEntity(
+        name: faker.person.name(),
+        email: faker.internet.email(),
+        password: faker.internet.password(),
+      );
+
+  late RegisterUserUseCase registerUserUseCase;
+  late RegisterUserParamsEntity registerUserParams;
+  late String fakerId;
 
   setUp(() {
-    registerUserController = RegisterUserController();
+    registerUserUseCase = MockRegisterUserUseCase();
+    registerUserParams = fakerDataRegister();
+    fakerId = faker.randomGenerator.string(100);
+    registerFallbackValue(registerUserParams);
   });
 
-  test('should register user successfully', () async {
-    const email = 'testALlan123@example.com';
-    const password = 'password123';
-    const name = 'John Doe';
+  group("Register user", () {
+    test('should register user successfully', () async {
+      when(() => registerUserUseCase.call(params: any(named: 'params')))
+          .thenAnswer((_) async => fakerId);
 
-    final result = await registerUserController.registerUser(
-      email: email,
-      password: password,
-      name: name,
-    );
+      final result = await registerUserUseCase.call(params: registerUserParams);
 
-    print(result);
+      print(result);
 
-    expect(result, isA<RegisterUserModel>());
-  });
+      expect(result, fakerId);
 
-  test('should handle registration error', () async {
-    const email = 'testeemail.com';
-    const password = 'passasd123adadw';
-    const name = 'John Doe';
-
-    final result = await registerUserController.registerUser(
-      email: email,
-      password: password,
-      name: name,
-    );
-
-    print(result);
-
-    expect(result, isA<Exception>());
+      verify(() => registerUserUseCase.call(params: registerUserParams))
+          .called(1);
+    });
   });
 }

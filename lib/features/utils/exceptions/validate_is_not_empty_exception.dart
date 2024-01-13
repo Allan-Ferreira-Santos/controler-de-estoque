@@ -1,0 +1,3 @@
+class ValidateIsNotEmptyException implements Exception {
+  
+}

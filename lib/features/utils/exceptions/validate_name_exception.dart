@@ -1,0 +1,1 @@
+class ValidateNameException implements Exception {}

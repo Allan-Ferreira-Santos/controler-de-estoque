@@ -6,6 +6,4 @@ class LoginController = _LoginController with _$LoginController;
 
 abstract class _LoginController with Store {
 
-
-
 }
